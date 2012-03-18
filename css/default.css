@@ -1,0 +1,17 @@
+body{
+	width:100%;
+	height:100%;
+	margin:0px;
+	padding:0px;
+	text-align:center;
+	background-color:gray;
+}
+
+canvas{
+	outline:0;
+	margin-left:auto;
+	margin-right:auto;
+	margin-top:20px;
+	width:600px;
+	height:480px;
+}
