@@ -1,6 +1,7 @@
 Math.TAU = Math.PI * 2;
 /*global Stats: true */
 /*global level */
+/*global ship */
 
 var stats = new Stats();
 
@@ -27,7 +28,7 @@ window.onload = function main() {
 	}
 
 	level.width = width = 600;
-	level.height = width = 480;
+	level.height = height = 480;
 
 	level.canvas = document.getElementById('background');
 	level.loadLevel(1, function (json) {
@@ -35,21 +36,38 @@ window.onload = function main() {
 		level.drawLevel(context2d);
 	});
 
-	canvas = document.getElementById('game');
-	context2d = canvas.getContext('2d');
+	ship.canvas = document.getElementById('game');
+	ship.reset();
+	ship.fuel = 1000;
 
+	canvas = document.getElementById('game');
 	canvas.width = width;
 	canvas.height = height;
+	context2d = canvas.getContext('2d');
 
 	function gameLoop() {
 		clear();
+		ship.update();
+		ship.draw();
 	}
 	document.onkeydown = function (event) {
-		if (event.keyCode === 37) {
-			level.x -= 1;
+		if (event.keyCode === 38 && ship.fuel > 0 && ship.thrust < 1) { // UP
+			ship.thrust += 0.1;
+			if (ship.thrust > 1) {
+				ship.thrust  = 1
+			}
 		}
-		if (event.keyCode === 39) {
-			level.x += 1;
+		if (event.keyCode === 40 && ship.thrust > 0) { // DOWN
+			ship.thrust -= 0.1;
+			if (ship.thrust < 0) {
+				ship.thrust  = 0
+			}
+		}
+		if (event.keyCode === 37) { // LEFT
+			ship.rotation += 1 / 18;
+		}
+		if (event.keyCode === 39) { // RIGHT
+			ship.rotation -= 1 / 18;
 		}
 	};
 
