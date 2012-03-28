@@ -1,3 +1,6 @@
+/*global vector2d */
+/*global line2d */
+
 var level = Object.create({}, {
 	width : {
 		value: undefined,
@@ -25,6 +28,11 @@ var level = Object.create({}, {
 		writable: true,
 		enumarable: true
 	},
+	lines : {
+		value: [],
+		writable: true,
+		enumarable: true
+	},
 	canvas : {
 		set:  function (value) {
 			"use strict";
@@ -43,9 +51,10 @@ var level = Object.create({}, {
 			this.x = 0;
 
 			request = new XMLHttpRequest();
-			request.open("GET", "data/level" + number + ".json", false);
+			request.parent = this;
+			request.open("GET", "data/level" + number + ".json", true);
 			request.onreadystatechange = function () {
-				var prependArray, appendArray, i;
+				var prependArray, appendArray, i, line;
 
 				if (request.readyState === 4) { //&& request.status === 200
 					json = JSON.parse(request.responseText);
@@ -68,6 +77,12 @@ var level = Object.create({}, {
 
 					appendArray.reverse();
 					json.data.points = json.data.points.concat(appendArray);
+
+					for (i = 0; i < json.data.points.length -1; i += 1) {
+						line = Object.create(line2d);
+						line.defineFromPoints(json.data.points[i + 1], json.data.points[i]);
+						this.parent.lines.push(line);
+					}
 
 					onComplete(json);
 				}

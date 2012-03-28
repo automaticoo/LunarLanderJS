@@ -2,6 +2,7 @@ Math.TAU = Math.PI * 2;
 /*global Stats: true */
 /*global level */
 /*global ship */
+/*global vector2d */
 
 var stats = new Stats();
 
@@ -20,7 +21,7 @@ setInterval(function () {
 window.onload = function main() {
 	"use strict";
 
-	var canvas, context2d, height, width, i;
+	var canvas, context2d, height, width;
 
 	//declaration of function used later
 	function clear() {
@@ -40,11 +41,16 @@ window.onload = function main() {
 	ship.reset();
 	ship.fuel = 1000;
 
+	var line = Object.create(line2d);
+	line.defineFromPoints({x:100, y:100}, {x:300, y:300});
+	
+	console.log(line);
+	
 	canvas = document.getElementById('game');
 	canvas.width = width;
 	canvas.height = height;
 	context2d = canvas.getContext('2d');
-
+	
 	function gameLoop() {
 		clear();
 		ship.update();
@@ -54,13 +60,13 @@ window.onload = function main() {
 		if (event.keyCode === 38 && ship.fuel > 0 && ship.thrust < 1) { // UP
 			ship.thrust += 0.1;
 			if (ship.thrust > 1) {
-				ship.thrust  = 1
+				ship.thrust  = 1;
 			}
 		}
 		if (event.keyCode === 40 && ship.thrust > 0) { // DOWN
 			ship.thrust -= 0.1;
 			if (ship.thrust < 0) {
-				ship.thrust  = 0
+				ship.thrust  = 0;
 			}
 		}
 		if (event.keyCode === 37) { // LEFT

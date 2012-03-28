@@ -1,14 +1,16 @@
+/*global vector2d */
+
 var THRUST_CONSTANT = 0.0015;
 var DRAG = 0.999;
 
 var ship = Object.create({}, {
 	position : {
-		value: {x: 0, y: 0},
+		value: Object.create(vector2d),
 		writable: true,
 		enumarable: true
 	},
 	velocity : {
-		value: {x: 0, y: 0},
+		value: Object.create(vector2d),
 		writable: true,
 		enumarable: true
 	},
@@ -97,10 +99,8 @@ var ship = Object.create({}, {
 			} else {
 				this.fuel -= this.thrust * 0.2;
 			}
-			
-			//update position
-			this.position.x += this.velocity.x;
-			this.position.y += this.velocity.y;
+			//update position			
+			this.position.add(this.velocity);
 		}
 	},
 	reset : {
