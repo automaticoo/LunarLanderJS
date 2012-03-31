@@ -3,6 +3,7 @@ Math.TAU = Math.PI * 2;
 /*global level */
 /*global ship */
 /*global vector2d */
+/*global starfield */
 
 var stats = new Stats();
 
@@ -21,7 +22,7 @@ setInterval(function () {
 window.onload = function main() {
 	"use strict";
 
-	var canvas, context2d, height, width;
+	var canvas, context2d, height, width, line;
 
 	//declaration of function used later
 	function clear() {
@@ -32,29 +33,37 @@ window.onload = function main() {
 	level.height = height = 480;
 
 	level.canvas = document.getElementById('background');
-	level.loadLevel(1, function (json) {
-		level.data = json.data;
-		level.drawLevel(context2d);
-	});
+	level.loadLevel(1);
 
+	starfield.canvas = document.getElementById('game');
+	starfield.createStars(100);
+	
 	ship.canvas = document.getElementById('game');
 	ship.reset();
 	ship.fuel = 1000;
 
-	var line = Object.create(line2d);
-	line.defineFromPoints({x:100, y:100}, {x:300, y:300});
-	
-	console.log(line);
-	
 	canvas = document.getElementById('game');
 	canvas.width = width;
 	canvas.height = height;
 	context2d = canvas.getContext('2d');
-	
+
 	function gameLoop() {
+		var i;
 		clear();
+		level.draw();
+		
+		starfield.update();
+		starfield.draw();
+		
 		ship.update();
 		ship.draw();
+		ship.circle.draw(context2d);
+
+		for (i = 0; i < level.lines.length; i += 1) {
+			if (ship.circle.intersectToLine(level.lines[i]).length > 0) {
+				level.lines[i].color = 'red';
+			}
+		}
 	}
 	document.onkeydown = function (event) {
 		if (event.keyCode === 38 && ship.fuel > 0 && ship.thrust < 1) { // UP

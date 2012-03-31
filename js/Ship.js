@@ -1,4 +1,5 @@
 /*global vector2d */
+/*global circle2d */
 
 var THRUST_CONSTANT = 0.0015;
 var DRAG = 0.999;
@@ -6,6 +7,11 @@ var DRAG = 0.999;
 var ship = Object.create({}, {
 	position : {
 		value: Object.create(vector2d),
+		writable: true,
+		enumarable: true
+	},
+	circle : {
+		value: Object.create(circle2d),
 		writable: true,
 		enumarable: true
 	},
@@ -43,7 +49,6 @@ var ship = Object.create({}, {
 	draw : {
 		value: function () {
 			"use strict";
-
 			this.context2d.save();
 			this.context2d.translate(this.position.x, this.position.y);
 			this.context2d.rotate(this.rotation);
@@ -101,17 +106,21 @@ var ship = Object.create({}, {
 			}
 			//update position			
 			this.position.add(this.velocity);
+
+			this.circle.y = this.position.y;
+			this.circle.x = this.position.x;
 		}
 	},
 	reset : {
 		value: function () {
 			"use strict";
 			this.position.x = 200;
-			this.position.y = 100;
+			this.position.y = 400;
 			this.velocity.x = 0;
 			this.velocity.y = 0;
 			this.rotation = 0;
 			this.thrust = 1;
+			this.circle.radius = 6;
 		}
 	}
 });

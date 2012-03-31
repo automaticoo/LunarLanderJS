@@ -16,12 +16,17 @@ var level = Object.create({}, {
 		set: function (value) {
 			"use strict";
 			this.localX = value;
-			this.drawLevel();
+			this.update = true;
 		},
 		get: function () {
 			"use strict";
 			return this.localX;
 		}
+	},
+	update : {
+		value: true,
+		writable: true,
+		enumarable: true
 	},
 	data : {
 		value: undefined,
@@ -43,7 +48,7 @@ var level = Object.create({}, {
 		}
 	},
 	loadLevel : {
-		value: function (number, onComplete) {
+		value: function (number) {
 			"use strict";
 			var json, request;
 
@@ -78,30 +83,37 @@ var level = Object.create({}, {
 					appendArray.reverse();
 					json.data.points = json.data.points.concat(appendArray);
 
-					for (i = 0; i < json.data.points.length -1; i += 1) {
+					for (i = 0; i < json.data.points.length - 1; i += 1) {
 						line = Object.create(line2d);
 						line.defineFromPoints(json.data.points[i + 1], json.data.points[i]);
+						line.color = 'black';
 						this.parent.lines.push(line);
 					}
-
-					onComplete(json);
+					this.parent.data = json.data;
 				}
 			};
 			request.send(null);
 		},
 		enumarable: true
 	},
-	drawLevel : {
+	draw : {
 		value: function () {
 			"use strict";
 			var i;
 			if (!this.context2d) {
 				console.log("first set canvas before drawing");
 			}
-			if (this.data !== undefined) {
+			if (this.lines.length > 0) {
 				this.context2d.clearRect(0, 0, this.width, this.height);
+				for (i = 0; i < this.lines.length; i += 1) {
+					this.lines[i].lineWidth = 2;
+					this.lines[i].draw(this.context2d);
+				}
+				this.update = false;
+
 				this.context2d.fillStyle = "black";
 				this.context2d.strokeStyle = "white";
+				this.context2d.lineWidth = 1;
 				this.context2d.beginPath();
 				this.context2d.moveTo(this.data.points[0].x, this.height);
 				for (i = 0; i < this.data.points.length; i += 1) {
