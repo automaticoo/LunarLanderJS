@@ -24,10 +24,7 @@ window.onload = function main() {
 
 	var canvas, context2d, height, width, line;
 
-	//declaration of function used later
-	function clear() {
-		context2d.clearRect(0, 0, width, height);
-	}
+    ship.sound = document.getElementById('thruster');
 
 	level.width = width = 600;
 	level.height = height = 480;
@@ -37,7 +34,7 @@ window.onload = function main() {
 
 	starfield.canvas = document.getElementById('game');
 	starfield.createStars(100);
-	
+
 	ship.canvas = document.getElementById('game');
 	ship.reset();
 	ship.fuel = 1000;
@@ -49,12 +46,13 @@ window.onload = function main() {
 
 	function gameLoop() {
 		var i;
-		clear();
+
+        context2d.clearRect(0, 0, width, height);
 		level.draw();
-		
+
 		starfield.update();
 		starfield.draw();
-		
+
 		ship.update();
 		ship.draw();
 		ship.circle.draw(context2d);

@@ -36,6 +36,14 @@ var ship = Object.create({}, {
 			this.context2d = value.getContext('2d');
 		}
 	},
+    sound : {
+      set: function (value) {
+          "use strict";
+          this.localSound = value;
+          this.localSound.play();
+          this.localSound.volume = 0;
+      }
+    },
 	thrust : {
 		value: undefined,
 		writable: true,
@@ -104,6 +112,9 @@ var ship = Object.create({}, {
 			} else {
 				this.fuel -= this.thrust * 0.2;
 			}
+
+            this.localSound.volume = this.thrust;
+
 			//update position			
 			this.position.add(this.velocity);
 
