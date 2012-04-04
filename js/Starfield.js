@@ -7,12 +7,6 @@ var starfield = Object.create({}, {
 		writable: true,
 		enumarable: true
 	},
-	canvas : {
-		set:  function (value) {
-			"use strict";
-			this.context2d = value.getContext('2d');
-		}
-	},
 	createStars : {
 		value: function (number) {
 			"use strict";
@@ -38,17 +32,35 @@ var starfield = Object.create({}, {
 		}
 	},
 	draw : {
-		value: function () {
+		value: function (context2d) {
 			"use strict";
-			var star, i;
-			this.context2d.fillStyle = "white";
-			this.context2d.beginPath();
+			var star, i, imageData, index, y, xL, xR, xLA, xRA;
+
+			function makePixelWhite(imageData, x, y, a) {
+				index = (x + y * imageData.width) * 4;
+				imageData.data[index] = 256;
+				imageData.data[index + 1] = 256;
+				imageData.data[index + 2] = 256;
+				imageData.data[index + 3] = a;
+			}
+
+			imageData = context2d.createImageData(600, 480);
+
 			for (i = 0; i < this.stars.length; i += 1) {
 				star = this.stars[i];
-				this.context2d.arc(star.x, star.y, 1, Math.TAU, false);
+
+				xL = Math.floor(star.x); //calculate left pixel
+				xR = Math.ceil(star.x); //calculate right pixel
+
+				xLA = star.x - xL; //calculate distance from real pixel to left pixel to get an alpha value
+				xRA = xR - star.x; //calculate distance from right pixel to real pixel to get an alpha value
+
+				y = parseInt(star.y, 10);
+
+				makePixelWhite(imageData, xL, y, xRA * 255); // 0xff opaque
+				makePixelWhite(imageData, xR, y, xLA * 255); // 0xff opaque
 			}
-			this.context2d.fill();
-			this.context2d.closePath();
+			context2d.putImageData(imageData, 0, 0);
 		}
 	}
 });

@@ -2,16 +2,6 @@
 /*global line2d */
 
 var level = Object.create({}, {
-	width : {
-		value: undefined,
-		writable: true,
-		enumarable: true
-	},
-	height : {
-		value: undefined,
-		writable: true,
-		enumarable: true
-	},
 	x : {
 		set: function (value) {
 			"use strict";
@@ -38,21 +28,27 @@ var level = Object.create({}, {
 		writable: true,
 		enumarable: true
 	},
+	onLineChange : {
+		value: undefined,
+		writable: true,
+		enumarable: true
+	},
 	canvas : {
 		set:  function (value) {
 			"use strict";
 			this.context2d = value.getContext('2d');
 
-			value.width = this.width;
-			value.height = this.height;
+			value.width = 600;
+			value.height = 480;
 		}
 	},
 	loadLevel : {
-		value: function (number) {
+		value: function (number, callback) {
 			"use strict";
 			var json, request;
 
 			this.data = undefined;
+			this.lines = [];
 			this.x = 0;
 
 			request = new XMLHttpRequest();
@@ -90,6 +86,7 @@ var level = Object.create({}, {
 						this.parent.lines.push(line);
 					}
 					this.parent.data = json.data;
+					callback();
 				}
 			};
 			request.send(null);
@@ -104,7 +101,7 @@ var level = Object.create({}, {
 				console.log("first set canvas before drawing");
 			}
 			if (this.lines.length > 0) {
-				this.context2d.clearRect(0, 0, this.width, this.height);
+				this.context2d.clearRect(0, 0, 600, 480);
 				for (i = 0; i < this.lines.length; i += 1) {
 					this.lines[i].lineWidth = 2;
 					this.lines[i].draw(this.context2d);
@@ -115,11 +112,11 @@ var level = Object.create({}, {
 				this.context2d.strokeStyle = "white";
 				this.context2d.lineWidth = 1;
 				this.context2d.beginPath();
-				this.context2d.moveTo(this.data.points[0].x, this.height);
+				this.context2d.moveTo(this.data.points[0].x, 480);
 				for (i = 0; i < this.data.points.length; i += 1) {
 					this.context2d.lineTo(this.data.points[i].x + this.localX, this.data.points[i].y);
 				}
-				this.context2d.lineTo(this.data.points[this.data.points.length - 1].x, this.height);
+				this.context2d.lineTo(this.data.points[this.data.points.length - 1].x, 480);
 				this.context2d.fill();
 				this.context2d.stroke();
 				this.context2d.closePath();

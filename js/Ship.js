@@ -30,12 +30,6 @@ var ship = Object.create({}, {
 		writable: true,
 		enumarable: true
 	},
-	canvas : {
-		set:  function (value) {
-			"use strict";
-			this.context2d = value.getContext('2d');
-		}
-	},
     sound : {
       set: function (value) {
           "use strict";
@@ -55,38 +49,38 @@ var ship = Object.create({}, {
 		enumarable: true
 	},
 	draw : {
-		value: function () {
+		value: function (context2d) {
 			"use strict";
-			this.context2d.save();
-			this.context2d.translate(this.position.x, this.position.y);
-			this.context2d.rotate(this.rotation);
-			this.context2d.strokeStyle = "white";
-			this.context2d.beginPath();
+			context2d.save();
+			context2d.translate(this.position.x, this.position.y);
+			context2d.rotate(this.rotation);
+			context2d.strokeStyle = "white";
+			context2d.beginPath();
 
 			//circle
-			this.context2d.arc(0, 0, 4, 0, Math.TAU, true);
+			context2d.arc(0, 0, 4, 0, Math.TAU, true);
 
 			//right diagonal line
-			this.context2d.moveTo(2, 2);
-			this.context2d.lineTo(4, 5);
+			context2d.moveTo(2, 2);
+			context2d.lineTo(4, 5);
 
 			//left diagonal line
-			this.context2d.moveTo(-2, 2);
-			this.context2d.lineTo(-4, 5);
+			context2d.moveTo(-2, 2);
+			context2d.lineTo(-4, 5);
 
 			//middle line
-			this.context2d.moveTo(-3.2, 4);
-			this.context2d.lineTo(3.2, 4);
+			context2d.moveTo(-3.2, 4);
+			context2d.lineTo(3.2, 4);
 
 			//thrust triangle
-			this.context2d.moveTo(-2, 5);
-			this.context2d.lineTo(0, this.thrust * 20 + 5);
-			this.context2d.lineTo(2, 5);
+			context2d.moveTo(-2, 5);
+			context2d.lineTo(0, this.thrust * 20 + 5);
+			context2d.lineTo(2, 5);
 
-			this.context2d.stroke();
-			this.context2d.closePath();
+			context2d.stroke();
+			context2d.closePath();
 
-			this.context2d.restore();
+			context2d.restore();
 		}
 	},
 	update : {
@@ -113,7 +107,7 @@ var ship = Object.create({}, {
 				this.fuel -= this.thrust * 0.2;
 			}
 
-            this.localSound.volume = this.thrust;
+            //this.localSound.volume = this.thrust;
 
 			//update position			
 			this.position.add(this.velocity);

@@ -4,6 +4,7 @@ Math.TAU = Math.PI * 2;
 /*global ship */
 /*global vector2d */
 /*global starfield */
+/*global Worker */
 
 var stats = new Stats();
 
@@ -22,68 +23,71 @@ setInterval(function () {
 window.onload = function main() {
 	"use strict";
 
-	var canvas, context2d, height, width, line;
+	var canvas, context2d, worker, GameStates, currentState;
 
-    ship.sound = document.getElementById('thruster');
-
-	level.width = width = 600;
-	level.height = height = 480;
-
-	level.canvas = document.getElementById('background');
-	level.loadLevel(1);
-
-	starfield.canvas = document.getElementById('game');
-	starfield.createStars(100);
-
+	GameStates = {
+		RESTART_GAME : 0,
+		START_GAME : 1,
+		NEXT_LEVEL : 2,
+		UPDATE_LEVEL : 3
+	};
+	
+	//initialize collision worker
+	worker = new Worker("js/CollisionWorker.js");
+	worker.addEventListener('message', function (event) {
+		var message;
+		message = JSON.parse(event.data);
+		if (message.type === "collision") {
+			//collision on points message.data
+			console.log("col");
+		}
+	});
+	
+	//initialize canvas
+	canvas = document.getElementById('game');
+	canvas.width = 600;
+	canvas.height = 480;
+	context2d = canvas.getContext('2d');
+	
+	//initialize ship
+	ship.sound = document.getElementById('thruster');
 	ship.canvas = document.getElementById('game');
 	ship.reset();
-	ship.fuel = 1000;
+	ship.fuel = 1000000;
+	
+	shipController.init();
+	console.log(shipController);
+	
+	//initialize level
+	level.canvas = document.getElementById('background');
+	level.loadLevel(0, function () {
+		worker.postMessage(JSON.stringify({type: "LinesUpdate", data: level.lines}));
+	});
 
-	canvas = document.getElementById('game');
-	canvas.width = width;
-	canvas.height = height;
-	context2d = canvas.getContext('2d');
+	//initialize starfield
+	starfield.createStars(2000);
 
 	function gameLoop() {
-		var i;
+        context2d.clearRect(0, 0, 600, 480);
 
-        context2d.clearRect(0, 0, width, height);
 		level.draw();
 
 		starfield.update();
-		starfield.draw();
-
+		starfield.draw(context2d);
+		
+		shipController.update(ship);
+		
 		ship.update();
-		ship.draw();
-		ship.circle.draw(context2d);
+		ship.draw(context2d);
 
-		for (i = 0; i < level.lines.length; i += 1) {
-			if (ship.circle.intersectToLine(level.lines[i]).length > 0) {
-				level.lines[i].color = 'red';
-			}
-		}
+		context2d.textAlign = 'center';
+		context2d.fillStyle = '#fff';
+		context2d.font = "20pt Vectorb";
+		context2d.fillText("PRESS A KEY TO PLAY", 600 / 2, 480 / 2);
+
+		worker.postMessage(JSON.stringify({type: "ShipUpdate", data: ship.circle}));
 	}
-	document.onkeydown = function (event) {
-		if (event.keyCode === 38 && ship.fuel > 0 && ship.thrust < 1) { // UP
-			ship.thrust += 0.1;
-			if (ship.thrust > 1) {
-				ship.thrust  = 1;
-			}
-		}
-		if (event.keyCode === 40 && ship.thrust > 0) { // DOWN
-			ship.thrust -= 0.1;
-			if (ship.thrust < 0) {
-				ship.thrust  = 0;
-			}
-		}
-		if (event.keyCode === 37) { // LEFT
-			ship.rotation += 1 / 18;
-		}
-		if (event.keyCode === 39) { // RIGHT
-			ship.rotation -= 1 / 18;
-		}
-	};
-
+	
 	setInterval(gameLoop, 1000 / 60);
 
 	gameLoop();
