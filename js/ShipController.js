@@ -12,15 +12,13 @@ var shipController = Object.create({}, {
 		value: function () {
 			"use strict";
 			var that = this;
-			
-			document.onkeydown = function (e) {
-				"use strict";
+
+			document.addEventListener("keydown", function (e) {
 				that.keysDown[e.keyCode] = true;
-			};
-			document.onkeyup = function (e) {
-				"use strict";
+			}, false);
+			document.addEventListener("keyup", function (e) {
 				that.keysDown[e.keyCode] = false;
-			};
+			}, false);
 		}
 	},
 	update : {
@@ -31,12 +29,14 @@ var shipController = Object.create({}, {
 				if (ship.thrust > 1) {
 					ship.thrust  = 1;
 				}
+				this.keysDown['38'] = false;
 			}
 			if (this.keysDown['40'] === true && ship.thrust > 0) { // DOWN
 				ship.thrust -= 0.1;
 				if (ship.thrust < 0) {
 					ship.thrust  = 0;
 				}
+				this.keysDown['40'] = false;
 			}
 			if (this.keysDown['37'] === true) { // LEFT
 				ship.rotation += 1 / 18;

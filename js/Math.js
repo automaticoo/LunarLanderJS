@@ -154,7 +154,7 @@ var basicShape = Object.create({}, {
 			this.x = (this.originalPoint.x * a) + this.originalPoint.y * c;
 			this.y = (this.originalPoint.x * b) + this.originalPoint.y * d;
 		},
-		get: function (rotation) {
+		get: function () {
 			"use strict";
 			if (!this.localRotation) {
 				this.localRotation = 0;
@@ -283,6 +283,7 @@ var circle2d = Object.create(basicShape, {
 	intersectToCircle: {
 		value: function (c2) {
 			"use strict";
+			c2 = c2;
 		}
 	},
 	draw: {
@@ -340,8 +341,6 @@ var line2d = Object.create(basicShape, {
 	rotation: {
 		set: function (rotation) {
 			"use strict";
-			var a, b, c, d;
-
 			this.vector.rotation += rotation - this.rotation;
 
 			Object.getPrototypeOf(Object.getPrototypeOf(this)).rotation = rotation;

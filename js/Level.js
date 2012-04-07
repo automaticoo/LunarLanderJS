@@ -7,10 +7,13 @@ var level = Object.create({}, {
 			"use strict";
 			this.localX = value;
 			this.update = true;
-		},
-		get: function () {
+		}
+	},
+	y : {
+		set: function (value) {
 			"use strict";
-			return this.localX;
+			this.localY = value;
+			this.update = true;
 		}
 	},
 	update : {

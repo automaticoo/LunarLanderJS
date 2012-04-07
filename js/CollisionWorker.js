@@ -1,8 +1,8 @@
-/*global self */
 /*global importScripts */
 /*global circle2d */
 /*global vector2d */
 /*global line2d */
+/*global self */
 
 importScripts("Math.js");
 
@@ -26,7 +26,7 @@ this.addEventListener("message", function (event) {
 	if (message.type === "ShipUpdate") {
 		circle.x = message.data.x;
 		circle.y = message.data.y;
-		circle.radius = message.data.radius;		
+		circle.radius = message.data.radius;
 	} else if (message.type === "LinesUpdate") {
 		lines = [];
 		linesData = message.data;
@@ -40,6 +40,8 @@ this.addEventListener("message", function (event) {
 			lines[i].vector.x = linesData[i].vector.x;
 			lines[i].vector.y = linesData[i].vector.y;
 		}
+	} else if (message.type === "StopUpdate") {
+		lines = undefined;
 	}
 });
 
@@ -50,7 +52,7 @@ function checkCollision() {
 		for (i = 0; i < lines.length; i += 1) {
 			ips = circle.intersectToLine(lines[i]);
 			if (ips.length > 0) {
-				self.postMessage(JSON.stringify({message:"collision", data:ips}));
+				self.postMessage(JSON.stringify({type: "collision", data: ips}));
 			}
 		}
 	}

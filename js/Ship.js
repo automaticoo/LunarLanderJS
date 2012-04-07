@@ -31,12 +31,12 @@ var ship = Object.create({}, {
 		enumarable: true
 	},
     sound : {
-      set: function (value) {
-          "use strict";
-          this.localSound = value;
-          this.localSound.play();
-          this.localSound.volume = 0;
-      }
+		set: function (value) {
+			"use strict";
+			this.localSound = value;
+			this.localSound.play();
+			this.localSound.volume = 0;
+		}
     },
 	thrust : {
 		value: undefined,
@@ -73,8 +73,20 @@ var ship = Object.create({}, {
 			context2d.lineTo(3.2, 4);
 
 			//thrust triangle
+			if (!this.thrustVarianceChange) {
+				this.thrustVarianceChange = 0;
+			}
+			this.thrustVarianceChange += 1;
+			if (this.thrustVarianceChange > 2) {
+				this.thrustVariance = Math.random() * 5;
+				this.thrustVarianceChange = 0;
+			}
+			if (this.thrust === 0) {
+				this.thrustVariance = 0;
+			}
+
 			context2d.moveTo(-2, 5);
-			context2d.lineTo(0, this.thrust * 20 + 5);
+			context2d.lineTo(0, this.thrust * 20 + 3 + this.thrustVariance);
 			context2d.lineTo(2, 5);
 
 			context2d.stroke();
@@ -107,7 +119,7 @@ var ship = Object.create({}, {
 				this.fuel -= this.thrust * 0.2;
 			}
 
-            //this.localSound.volume = this.thrust;
+            this.localSound.volume = this.thrust;
 
 			//update position			
 			this.position.add(this.velocity);
@@ -120,12 +132,14 @@ var ship = Object.create({}, {
 		value: function () {
 			"use strict";
 			this.position.x = 200;
-			this.position.y = 400;
+			this.position.y = 350;
 			this.velocity.x = 0;
 			this.velocity.y = 0;
 			this.rotation = 0;
-			this.thrust = 1;
+			this.thrust = 0;
+			this.localSound.volume = 0;
 			this.circle.radius = 6;
+			this.fuel = 1000;
 		}
 	}
 });
