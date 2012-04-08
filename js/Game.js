@@ -23,6 +23,7 @@ window.onload = function main() {
 	currentState = GameStates.START_GAME;
 	currentLevel = 0;
 
+
 	//initialize collision worker
 	worker = new Worker("js/CollisionWorker.js");
 	worker.addEventListener('message', function (event) {
@@ -58,16 +59,11 @@ window.onload = function main() {
 
 	message.text = "PRESS A KEY TO PLAY\nSPACE FOR ONE TIME BOOSTER\nARROW KEYS TO MOVE";
 
+	
+	
 	function gameLoop() {
 		starfield.update();
 		if (currentState === GameStates.UPDATE_LEVEL) {
-			if (ship.position.y > 600-250) {
-				level.x = (-ship.position.x) * 2 + 600 / 2;
-				level.y = (-ship.position.y) * 2 + 480 / 2;
-			} else {
-				level.x = 0;
-				level.y = 0;
-			}
 			console.log(ship.position.y);
 			shipController.update(ship);
 			ship.update();

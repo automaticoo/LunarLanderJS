@@ -56,7 +56,7 @@ var ship = Object.create({}, {
 			context2d.rotate(this.rotation);
 			context2d.strokeStyle = "white";
 			context2d.beginPath();
-
+			
 			//circle
 			context2d.arc(0, 0, 4, 0, Math.TAU, true);
 
